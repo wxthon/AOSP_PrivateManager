@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#ff303030">
 
     <View
         android:layout_width="0dp"
-        android:layout_height="60dp" />
+        android:layout_height="50dp" />
 
     <ImageView
         android:id="@+id/id_app_icon"
@@ -23,7 +24,8 @@
         android:layout_toRightOf="@id/id_app_icon"
         android:layout_marginLeft="23dp"
         android:text="zhifubao"
-        android:layout_centerVertical="true"/>
+        android:layout_centerVertical="true"
+        android:textColor="#ffffffff"/>
 
     <Switch
         android:id="@+id/id_app_switch"
@@ -37,5 +39,5 @@
         android:layout_width="match_parent"
         android:layout_height="1px"
         android:layout_alignParentBottom="true"
-        android:background="#CCCCCC"/>
+        android:background="#555"/>
 </RelativeLayout>

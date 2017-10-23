@@ -3,43 +3,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="qiku.wxthon.MainActivity">
+    tools:context="com.robot.RobotUI">
 
     <RelativeLayout
         android:id="@+id/my_action_bar"
         android:layout_width="match_parent"
-        android:layout_height="52dp"
-        android:background="@color/colorPrimary"
+        android:layout_height="300dp"
+        android:background="#ff212121"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/app_name"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            android:gravity="center"
-            android:textSize="20sp"
-            android:textColor="#fff"/>
-
-        <Button
-            android:id="@+id/smart_clean_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:text="SmartClean"
-            android:gravity="center"
-            android:layout_centerVertical="true"
-            android:layout_alignParentRight="true"
-            android:textAllCaps="false"
-            android:background="#333"
-            android:textColor="#fff"/>
 
     </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/id_app_list"
+        android:id="@+id/component_panel"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/my_action_bar"
