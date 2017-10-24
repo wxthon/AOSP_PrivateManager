@@ -4,36 +4,23 @@ import android.app.Activity;
 import android.app.PrivateManager;
 import android.app.Service;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.ArrayMap;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.Toast;
+import android.widget.TextView;
 
-import com.robot.App;
-import com.robot.AppAdapter;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -52,8 +39,9 @@ public class RobotUI extends Activity {
     private List<String> mBlackPackages;
 
     private IRobot mRobot = null;
-    private List<RobotComponent> mComponents;
+    private List<RobotComponent> mComponents = null;
     private Map<String, View> mComponentUIs = new ArrayMap<>();
+    private TextView mRobotMessageView = null;
 
     private ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
@@ -73,7 +61,7 @@ public class RobotUI extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.fragment_perm);
+        setContentView(R.layout.robot_ui);
 
         // bind robot service firstly
         if (mRobot == null) {
@@ -84,8 +72,9 @@ public class RobotUI extends Activity {
         LinearLayoutManager manager = new LinearLayoutManager(this);
         manager.setOrientation(LinearLayoutManager.VERTICAL);
         mComponentPanel.setLayoutManager(manager);
-
         mComponentPanel.setAdapter(new ComponentAdapter());
+
+        mRobotMessageView = (TextView) findViewById(R.id.robot_message);
 
 //        mBar = (ProgressBar) findViewById(R.id.progressBar);
 //        mSmartCleanBtn = (Button) findViewById(R.id.smart_clean_btn);
@@ -119,8 +108,10 @@ public class RobotUI extends Activity {
         try {
             if (!mRobot.isReady()) {
                 showRobotStat("not ready");
+                mRobotMessageView.setText("Robot is not ready ^-^, must fix it.");
                 return;
             }
+            mRobotMessageView.setText("Robot is well...");
             mComponents = mRobot.getComponents();
             initComponentUI();
         } catch (RemoteException e) {
@@ -147,7 +138,18 @@ public class RobotUI extends Activity {
     }
 
     private void showRobotStat(String message) {
+        mRobotMessageView.setText(message);
+    }
 
+    private void onComponentClicked(RobotComponent rc) {
+        try {
+            int id = mRobot.getComponentUI(rc);
+            Intent intent = new Intent(this, RobotComponentUI.class);
+            intent.putExtra("component_ui", id);
+            startActivity(intent);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
 //    private void loadApps(Context context) {
@@ -219,17 +221,30 @@ public class RobotUI extends Activity {
 
         @Override
         public ComponentViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new ComponentViewHolder(View.inflate(RobotUI.this, R.layout.layout_component_item, null));
+            LinearLayout layout = (LinearLayout) View.inflate(RobotUI.this, R.layout.component_item, null);
+            layout.setLayoutParams(new LinearLayout.LayoutParams(RobotTool.getHeight(), RobotTool.getHeight()/3));
+            return new ComponentViewHolder(layout);
         }
 
         @Override
         public void onBindViewHolder(ComponentViewHolder holder, int position) {
-            LinearLayout layout = (LinearLayout) holder.itemView;
-            layout.removeAllViews();
+            holder.mComponentLeft.removeAllViews();
+            holder.mComponentRight.removeAllViews();
             Object[] keys = mComponentUIs.keySet().toArray();
-            layout.addView(mComponentUIs.get(keys[position * 2]));
-            if (position * 2 + 1 < mComponentUIs.size())
-                layout.addView(mComponentUIs.get(keys[position * 2 + 1]));
+            String name = (String) keys[position * 2];
+            RobotComponentLayout rcLayout = (RobotComponentLayout) mComponentUIs.get(name);
+            rcLayout.setLayoutParams(new LinearLayout.LayoutParams(RobotTool.getHeight() / 3,
+                    RobotTool.getHeight() / 3));
+            holder.mComponentLeft.addView(rcLayout);
+            holder.mComponentLeft.setTag(name);
+            if (position * 2 + 1 < mComponentUIs.size()) {
+                name = (String) keys[position * 2 + 1];
+                rcLayout = (RobotComponentLayout) mComponentUIs.get(name);
+                rcLayout.setLayoutParams(new LinearLayout.LayoutParams(RobotTool.getHeight() / 3,
+                        RobotTool.getHeight() / 3));
+                holder.mComponentRight.addView(rcLayout);
+                holder.mComponentRight.setTag(name);
+            }
         }
 
         @Override
@@ -244,8 +259,28 @@ public class RobotUI extends Activity {
     }
 
     private class ComponentViewHolder extends RecyclerView.ViewHolder {
+        private LinearLayout mComponentLeft;
+        private LinearLayout mComponentRight;
+
         public ComponentViewHolder(View itemView) {
             super(itemView);
+            mComponentLeft = (LinearLayout) itemView.findViewById(R.id.component_left);
+            mComponentRight = (LinearLayout) itemView.findViewById(R.id.component_right);
+
+            View.OnClickListener listener = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String name = (String) v.getTag();
+                    for (RobotComponent rc : mComponents) {
+                        if (name.equals(rc.getName())) {
+                            onComponentClicked(rc);
+                            break;
+                        }
+                    }
+                }
+            };
+            mComponentLeft.setOnClickListener(listener);
+            mComponentRight.setOnClickListener(listener);
         }
     }
 }

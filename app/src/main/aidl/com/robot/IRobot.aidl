@@ -10,4 +10,5 @@ interface IRobot {
 
     boolean isReady();
     List<RobotComponent> getComponents();
+    int getComponentUI(in RobotComponent rc);
 }

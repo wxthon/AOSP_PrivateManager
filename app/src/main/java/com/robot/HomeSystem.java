@@ -23,7 +23,12 @@ public class HomeSystem implements IRobotComponent {
     }
 
     @Override
-    public int getLayoutID() {
-        return 0;
+    public int getUILayout() {
+        return R.layout.home_system_ui;
+    }
+
+    @Override
+    public int getComponentLayout() {
+        return R.layout.home_system_component;
     }
 }

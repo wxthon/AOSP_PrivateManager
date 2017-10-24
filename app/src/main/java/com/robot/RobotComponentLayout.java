@@ -26,4 +26,5 @@ public class RobotComponentLayout extends LinearLayout {
     public RobotComponentLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
+
 }

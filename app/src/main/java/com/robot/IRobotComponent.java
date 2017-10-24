@@ -8,5 +8,7 @@ public interface IRobotComponent {
 
     String getName();
 
-    int getLayoutID();
+    int getComponentLayout();
+
+    int getUILayout();
 }

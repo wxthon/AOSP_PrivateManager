@@ -31,7 +31,12 @@ public class SmartCleaner implements IProcessCleaner, IRobotComponent {
     }
 
     @Override
-    public int getLayoutID() {
-        return R.layout.smart_cleaner;
+    public int getComponentLayout() {
+        return R.layout.smart_cleaner_component;
+    }
+
+    @Override
+    public int getUILayout() {
+        return R.layout.smart_cleaner_ui;
     }
 }

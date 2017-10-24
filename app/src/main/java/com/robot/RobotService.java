@@ -108,9 +108,19 @@ public class RobotService extends Service {
         public List<RobotComponent> getComponents() throws RemoteException {
             List<RobotComponent> components = new ArrayList<>();
             for (IRobotComponent c : mComponents) {
-                components.add(new RobotComponent(c.getName(), c.getLayoutID()));
+                components.add(new RobotComponent(c.getName(), c.getComponentLayout()));
             }
             return components;
+        }
+
+        @Override
+        public int getComponentUI(RobotComponent rc) throws RemoteException {
+            for (IRobotComponent c : mComponents) {
+                if (c.getName().equals(rc.getName())) {
+                    return c.getUILayout();
+                }
+            }
+            return 0;
         }
     }
 
